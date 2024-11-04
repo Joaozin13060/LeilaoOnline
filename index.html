@@ -5,37 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leilão Online</title>
     <link rel="stylesheet" href="style.css">
-    <script type="module" src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js"></script>
-    <script type="module" src="https://www.gstatic.com.firebasejs/11.0.1/firebase-database.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js"></script>
 </head>
 <body>
     <header>
         <h1>Leilão Online</h1>
         <input type="text" id="nomeUsuario" placeholder="Digite seu nome">
-        <div id="temporizador">Tempo total restante: 5:00</div>
-        <div id="notificacao-area"></div>
     </header>
-    <ul id="itens-lista">
-        <li>
+    <main>
+        <div>
             <h2>Mansão de Luxo</h2>
-            <p id="valor-mansaodeluxo">R$ 12.000.000,00</p>
+            <p id="valor-mansãodeluxo">R$ 12.000.000,00</p>
             <button onclick="darLance('Mansão de Luxo')">Dar Lance</button>
-            <div id="historico-mansaodeluxo">Histórico de lances: Nenhum lance ainda.</div>
-        </li>
-        <li>
+            <div id="historico-mansãodeluxo"></div>
+        </div>
+
+        <div>
             <h2>Iphone 16</h2>
             <p id="valor-iphone16">R$ 15.000,00</p>
             <button onclick="darLance('Iphone 16')">Dar Lance</button>
-            <div id="historico-iphone16">Histórico de lances: Nenhum lance ainda.</div>
-        </li>
-        <li>
+            <div id="historico-iphone16"></div>
+        </div>
+
+        <div>
             <h2>Videogame</h2>
             <p id="valor-videogame">R$ 7.000,00</p>
             <button onclick="darLance('Videogame')">Dar Lance</button>
-            <div id="historico-videogame">Histórico de lances: Nenhum lance ainda.</div>
-        </li>
-    </ul>
-    <script type="module" src="script.js"></script>
+            <div id="historico-videogame"></div>
+        </div>
+
+        <div id="temporizador"></div>
+        <div id="notificacao-area"></div>
+    </main>
+    <script src="script.js"></script>
 </body>
 </html>
