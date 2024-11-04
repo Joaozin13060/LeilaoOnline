@@ -5,16 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leilão Online</title>
     <link rel="stylesheet" href="style.css">
-    <script type="module" src="script.js" defer></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com.firebasejs/11.0.1/firebase-database.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js"></script>
 </head>
 <body>
     <header>
         <h1>Leilão Online</h1>
-        <input type="text" id="nomeUsuario" placeholder="Digite seu nome" />
+        <input type="text" id="nomeUsuario" placeholder="Digite seu nome">
         <div id="temporizador">Tempo total restante: 5:00</div>
         <div id="notificacao-area"></div>
     </header>
-    <ul>
+    <ul id="itens-lista">
         <li>
             <h2>Mansão de Luxo</h2>
             <p id="valor-mansaodeluxo">R$ 12.000.000,00</p>
@@ -34,5 +36,6 @@
             <div id="historico-videogame">Histórico de lances: Nenhum lance ainda.</div>
         </li>
     </ul>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
