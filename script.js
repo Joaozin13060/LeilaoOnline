@@ -15,7 +15,7 @@ function darLance(item) {
     nome = prompt("Digite seu nome:");
   }
 
-  const valorLance = parseFloat(prompt(`Digite o valor do lance para ${item}:`));
+  const valorLance = parseFloat(prompt(`Digite o valor do lance para ${item} (deve ser maior que R$ ${itens[item].valorAtual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}):`));
 
   // Verifica se o lance é válido (deve ser maior que o valor atual)
   if (isNaN(valorLance) || valorLance <= itens[item].valorAtual) {
