@@ -7,12 +7,12 @@ const itens = {
 
 // Função para dar lance em um item
 function darLance(item) {
-  let nome = prompt("Digite seu nome:");
+  let nome = document.getElementById("nomeUsuario").value.trim();
 
   // Verifica se o nome foi preenchido
-  while (!nome) {
+  if (!nome) {
     alert("Por favor, insira seu nome para dar um lance.");
-    nome = prompt("Digite seu nome:");
+    return;
   }
 
   const valorLance = parseFloat(prompt(`Digite o valor do lance para ${item} (deve ser maior que R$ ${itens[item].valorAtual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}):`));
@@ -25,15 +25,18 @@ function darLance(item) {
 
   // Atualiza o valor atual e o histórico de lances
   itens[item].valorAtual = valorLance;
-  itens[item].historico = [{ nome, valor: valorLance }]; // Substitui o histórico com o novo lance
+  itens[item].historico.push({ nome, valor: valorLance });
 
   // Atualiza a interface
-  document.getElementById(`valor-${item.toLowerCase().replace(" ", "")}`).textContent = `Valor atual: R$ ${valorLance.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
-  atualizarHistorico(item);
+  atualizarInterface(item);
 }
 
-// Função para atualizar o histórico de lances
-function atualizarHistorico(item) {
+// Função para atualizar a interface com o valor atual e o histórico de lances
+function atualizarInterface(item) {
+  // Atualiza o valor atual
+  document.getElementById(`valor-${item.toLowerCase().replace(" ", "")}`).textContent = `Valor atual: R$ ${itens[item].valorAtual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+
+  // Atualiza o histórico de lances
   const historicoDiv = document.getElementById(`historico-${item.toLowerCase().replace(" ", "")}`);
   const historico = itens[item].historico.map(lance => `${lance.nome}: R$ ${lance.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`);
   historicoDiv.textContent = `Histórico de lances: ${historico.length > 0 ? historico.join(", ") : "Nenhum lance ainda."}`;
