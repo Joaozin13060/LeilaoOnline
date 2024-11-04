@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leilão Online</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+    header { background-color: #4CAF50; color: white; padding: 10px; text-align: center; }
+    input[type="text"] { padding: 10px; margin: 10px 0; width: 100%; border: 1px solid #ddd; border-radius: 4px; }
+    ul { list-style-type: none; padding: 0; }
+    li { margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+    button { background-color: #4CAF50; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; }
+    button:disabled { background-color: #ccc; cursor: not-allowed; }
+    .notificacao { background-color: #f9c2c2; padding: 10px; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Leilão Online</h1>
+    <p>Digite seu nome e dê um lance!</p>
+  </header>
+
+  <input type="text" id="nomeUsuario" placeholder="Seu Nome">
+  <ul id="listaLeiloes">
+    <li>
+      <strong>Mansão de Luxo</strong>
+      <p>Preço atual: <span id="valor-mansao">R$ 12.000.000,00</span></p>
+      <button onclick="darLance('Mansão de Luxo')">Dar Lance</button>
+      <p id="historico-mansao">Histórico de lances: Nenhum lance ainda.</p>
+    </li>
+    <li>
+      <strong>Iphone 16</strong>
+      <p>Preço atual: <span id="valor-iphone">R$ 15.000,00</span></p>
+      <button onclick="darLance('Iphone 16')">Dar Lance</button>
+      <p id="historico-iphone">Histórico de lances: Nenhum lance ainda.</p>
+    </li>
+    <li>
+      <strong>Videogame</strong>
+      <p>Preço atual: <span id="valor-videogame">R$ 7.000,00</span></p>
+      <button onclick="darLance('Videogame')">Dar Lance</button>
+      <p id="historico-videogame">Histórico de lances: Nenhum lance ainda.</p>
+    </li>
+  </ul>
+
+  <p id="temporizador">Tempo total restante: 5:00</p>
+  <div id="notificacao-area"></div>
+
+  <script type="module">
+    // Importa Firebase da CDN
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+    // Configuração do Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyBsAhR0CKD8xgzDMn83goCWs9sqQwCVcOs",
+      authDomain: "leilao-royale.firebaseapp.com",
+      databaseURL: "https://leilao-royale-default-rtdb.firebaseio.com",
+      projectId: "leilao-royale",
+      storageBucket: "leilao-royale.firebasestorage.app",
+      messagingSenderId: "813458416009",
+      appId: "1:813458416009:web:70454c60db524e834c0158"
+    };
+
+    // Inicializa Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    const VALOR_MINIMO_LANCE = 1000;
+    const lancesIniciais = { 
+      'Mansão de Luxo': { valor: 12000000, historico: [] }, 
+      'Iphone 16': { valor: 15000, historico: [] }, 
+      'Videogame': { valor: 7000, historico: [] }
+    };
+
+    // Define lances iniciais no banco de dados
+    set(ref(database, 'lances'), lancesIniciais);
+
+    // Função para dar lance
+    async function darLance(item) {
+      const nomeUsuario = document.getElementById("nomeUsuario").value;
+      if (!nomeUsuario) {
+        alert("Por favor, digite seu nome antes de dar um lance.");
+        return;
+      }
+
+      const lance = parseFloat(prompt(`Qual é o seu lance para ${item}?`));
+      if (isNaN(lance) || lance <= lancesIniciais[item].valor + VALOR_MINIMO_LANCE) {
+        alert(`O lance deve ser maior que R$ ${lancesIniciais[item].valor + VALOR_MINIMO_LANCE}.`);
+        return;
+      }
+
+      const lanceData = {
+        nome: nomeUsuario,
+        valor: lance
+      };
+
+      // Atualiza o banco de dados
+      const updates = {};
+      updates[`lances/${item}/valor`] = lance;
+      updates[`lances/${item}/historico`] = [...lancesIniciais[item].historico, lanceData];
+      await update(ref(database), updates);
+    }
+
+    // Atualiza exibição dos lances em tempo real
+    function atualizarLances() {
+      onValue(ref(database, 'lances'), (snapshot) => {
+        const data = snapshot.val();
+        Object.keys(data).forEach(item => {
+          document.getElementById(`valor-${item.toLowerCase().replace(/ /g, '')}`).innerText = `R$ ${data[item].valor.toLocaleString('pt-BR')}`;
+          const historicoText = data[item].historico.map(h => `${h.nome}: R$ ${h.valor.toLocaleString('pt-BR')}`).join(', ');
+          document.getElementById(`historico-${item.toLowerCase().replace(/ /g, '')}`).innerText = `Histórico de lances: ${historicoText || 'Nenhum lance ainda.'}`;
+        });
+      });
+    }
+
+    // Temporizador do leilão
+    let tempoRestante = 300;
+    const intervalo = setInterval(() => {
+      const minutos = Math.floor(tempoRestante / 60);
+      const segundos = tempoRestante % 60;
+      document.getElementById("temporizador").innerText = `Tempo total restante: ${minutos}:${segundos < 10 ? '0' : ''}${segundos}`;
+      tempoRestante--;
+      if (tempoRestante < 0) {
+        clearInterval(intervalo);
+        alert("O leilão terminou!");
+      }
+    }, 1000);
+
+    // Inicia atualização em tempo real
+    atualizarLances();
+  </script>
+</body>
+</html>
