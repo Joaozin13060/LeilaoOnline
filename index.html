@@ -3,39 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leilão Online</title>
+    <title>Leilão Fictício</title>
     <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
 </head>
 <body>
     <header>
-        <h1>Leilão Online</h1>
+        <h1>Leilão Fictício</h1>
         <input type="text" id="nomeUsuario" placeholder="Digite seu nome">
     </header>
-    <main>
-        <div>
-            <h2>Mansão de Luxo</h2>
-            <p id="valor-mansãodeluxo">R$ 12.000.000,00</p>
-            <button onclick="darLance('Mansão de Luxo')">Dar Lance</button>
-            <div id="historico-mansãodeluxo"></div>
-        </div>
-
-        <div>
-            <h2>Iphone 16</h2>
-            <p id="valor-iphone16">R$ 15.000,00</p>
-            <button onclick="darLance('Iphone 16')">Dar Lance</button>
-            <div id="historico-iphone16"></div>
-        </div>
-
-        <div>
-            <h2>Videogame</h2>
-            <p id="valor-videogame">R$ 7.000,00</p>
-            <button onclick="darLance('Videogame')">Dar Lance</button>
-            <div id="historico-videogame"></div>
-        </div>
-
-        <div id="temporizador"></div>
-        <div id="notificacao-area"></div>
-    </main>
-    <script src="script.js"></script>
+    <div id="notificacao-area"></div>
+    <div id="leilao">
+        <ul>
+            <li>
+                <h2>Mansão de Luxo</h2>
+                <p id="valor-mansãodeluxo">R$ 12.000.000,00</p>
+                <button onclick="darLance('Mansão de Luxo')">Dar Lance</button>
+                <p id="historico-mansãodeluxo"></p>
+            </li>
+            <li>
+                <h2>Iphone 16</h2>
+                <p id="valor-iphone16">R$ 15.000,00</p>
+                <button onclick="darLance('Iphone 16')">Dar Lance</button>
+                <p id="historico-iphone16"></p>
+            </li>
+            <li>
+                <h2>Videogame</h2>
+                <p id="valor-videogame">R$ 7.000,00</p>
+                <button onclick="darLance('Videogame')">Dar Lance</button>
+                <p id="historico-videogame"></p>
+            </li>
+        </ul>
+        <p id="temporizador"></p>
+    </div>
 </body>
 </html>
