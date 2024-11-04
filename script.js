@@ -17,9 +17,9 @@ function darLance(item) {
 
   const valorLance = parseFloat(prompt(`Digite o valor do lance para ${item}:`));
 
-  // Verifica se o lance é válido
+  // Verifica se o lance é válido (deve ser maior que o valor atual)
   if (isNaN(valorLance) || valorLance <= itens[item].valorAtual) {
-    alert("Lance inválido! O valor deve ser maior que o valor atual.");
+    alert(`Lance inválido! O valor deve ser maior que R$ ${itens[item].valorAtual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}.`);
     return;
   }
 
