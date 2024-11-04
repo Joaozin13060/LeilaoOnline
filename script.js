@@ -20,15 +20,10 @@ const db = getDatabase(app);
 
 const VALOR_MINIMO_LANCE = 1000; // Defina o valor mínimo do lance
 let lances = {
-  'Mansão de Luxo': { valor: 12000000, contagem: 0, historico: [] },
-  'Iphone 16': { valor: 15000, contagem: 0, historico: [] },
-  'Videogame': { valor: 7000, contagem: 0, historico: [] }
+  'Mansão de Luxo': { valor: 12000000, historico: [] },
+  'Iphone 16': { valor: 15000, historico: [] },
+  'Videogame': { valor: 7000, historico: [] }
 };
-
-// Atualiza os valores no Realtime Database
-function atualizarLancesNoBanco() {
-  set(ref(db, 'lances/'), lances);
-}
 
 // Carregar dados do Realtime Database
 function carregarDadosDoBanco() {
@@ -60,9 +55,8 @@ function darLance(item) {
   const lance = prompt(`Qual é o seu lance para ${item}?`);
   if (lance !== null && !isNaN(lance) && parseFloat(lance) >= lances[item].valor + VALOR_MINIMO_LANCE) {
     lances[item].valor = parseFloat(lance);
-    lances[item].contagem++;
     lances[item].historico.push(`${nomeUsuario}: R$ ${lance}`); // Adiciona o lance ao histórico
-    atualizarLancesNoBanco(); // Atualiza o banco de dados com o novo lance
+    set(ref(db, 'lances/'), lances); // Atualiza o banco de dados com o novo lance
     mostrarNotificacao(`${nomeUsuario} deu um lance de R$ ${lance} em ${item}.`);
   } else if (lance !== null) {
     alert(`O lance deve ser maior que R$ ${lances[item].valor.toFixed(2).replace('.', ',')} + R$ ${VALOR_MINIMO_LANCE}.`);
