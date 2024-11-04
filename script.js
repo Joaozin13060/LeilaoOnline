@@ -15,7 +15,7 @@ const firebaseConfig = {
   measurementId: "G-CYDFM4P7N4"
 };
 
-// Inicializar Firebase
+// Inicializa o Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
@@ -26,32 +26,46 @@ const updateUI = (item, valor, historico) => {
   historicoElement.innerHTML = `Histórico de lances: ${historico.join(', ') || 'Nenhum lance ainda.'}`;
 };
 
-// Definindo a função darLance como global
+// Função para dar um lance
 window.darLance = async (item) => {
   const nomeUsuario = document.getElementById('nomeUsuario').value;
-  const lance = prompt(`Digite seu lance para ${item} (Valor atual: R$ ${valorAtual}):`);
+  const lance = prompt(`Digite seu lance para ${item.charAt(0).toUpperCase() + item.slice(1)}:`);
 
-  if (lance && !isNaN(lance) && parseFloat(lance) > valorAtual) {
-    valorAtual = parseFloat(lance);
-    historico.push(`${nomeUsuario}: R$ ${valorAtual.toFixed(2)}`);
+  // Referência do documento no Firestore
+  const docRef = doc(db, 'leiloes', item);
+  const docSnap = await getDoc(docRef);
 
-    // Atualizar Firestore
-    await setDoc(doc(db, 'leiloes', item), {
-      valor: valorAtual,
-      historico: historico
-    });
+  if (docSnap.exists()) {
+    const data = docSnap.data();
+    const valorAtual = data.valor;
+    const historico = data.historico || [];
 
-    updateUI(item, valorAtual, historico);
+    // Verifica se o lance é válido
+    if (lance && !isNaN(lance) && parseFloat(lance) > valorAtual) {
+      const novoValor = parseFloat(lance);
+      historico.push(`${nomeUsuario}: R$ ${novoValor.toFixed(2)}`); // Atualiza o histórico
+
+      // Atualiza Firestore
+      await setDoc(docRef, {
+        valor: novoValor,
+        historico: historico
+      });
+
+      // Atualiza a interface do usuário
+      updateUI(item, novoValor, historico);
+    } else {
+      alert('Lance inválido! O lance deve ser maior que o valor atual.');
+    }
   } else {
-    alert('Lance inválido! O lance deve ser maior que o valor atual.');
+    alert('Item não encontrado!');
   }
-}
+};
 
 // Configurar o ouvinte para atualizações em tempo real
-const unsubscribe = onSnapshot(collection(db, 'leiloes'), (snapshot) => {
+onSnapshot(collection(db, 'leiloes'), (snapshot) => {
   snapshot.forEach((doc) => {
     const data = doc.data();
-    updateUI(doc.id, data.valor, data.historico);
+    updateUI(doc.id, data.valor, data.historico || []);
   });
 });
 
@@ -60,6 +74,6 @@ window.onload = async () => {
   const querySnapshot = await getDocs(collection(db, 'leiloes'));
   querySnapshot.forEach((doc) => {
     const data = doc.data();
-    updateUI(doc.id, data.valor, data.historico);
+    updateUI(doc.id, data.valor, data.historico || []);
   });
-}
+};
